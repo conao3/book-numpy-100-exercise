@@ -5,15 +5,211 @@
 
 * Config                                                           :noexport:
 * Import the numpy package under the name np (★☆☆)
+#+begin_src python
+import numpy as np
+#+end_src
+
+#+RESULTS[8e44e35431bcd44d0dfce26623e25e87bb39fb3f]:
+
 * Print the numpy version and the configuration (★☆☆)
+#+begin_src python
+print("numpy version:", np.__version__)
+np.show_config()
+#+end_src
+
+#+RESULTS[6031a7a450ff93e625a064cba91c4e1ce958b9da]:
+#+begin_example
+  numpy version: 1.18.3
+  blas_mkl_info:
+    NOT AVAILABLE
+  blis_info:
+    NOT AVAILABLE
+  openblas_info:
+      libraries = ['openblas', 'openblas']
+      library_dirs = ['/usr/local/lib']
+      language = c
+      define_macros = [('HAVE_CBLAS', None)]
+  blas_opt_info:
+      libraries = ['openblas', 'openblas']
+      library_dirs = ['/usr/local/lib']
+      language = c
+      define_macros = [('HAVE_CBLAS', None)]
+  lapack_mkl_info:
+    NOT AVAILABLE
+  openblas_lapack_info:
+      libraries = ['openblas', 'openblas']
+      library_dirs = ['/usr/local/lib']
+      language = c
+      define_macros = [('HAVE_CBLAS', None)]
+  lapack_opt_info:
+      libraries = ['openblas', 'openblas']
+      library_dirs = ['/usr/local/lib']
+      language = c
+      define_macros = [('HAVE_CBLAS', None)]
+#+end_example
+
 * Create a null vector of size 10 (★☆☆)
+#+begin_src python
+np.zeros(10)
+#+end_src
+
+#+RESULTS[3688ac0c792b10292b2721ad9b91f7d18df739a6]:
+: array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
+
 * How to find the memory size of any array (★☆☆)
+#+begin_src python
+Z = np.zeros(10)
+print("%d bytes" % (Z.size * Z.itemsize))
+#+end_src
+
+#+RESULTS[1b2ce5a0f4435e2de388d64ce02a89d2c11c60d0]:
+: 80 bytes
+
 * How to get the documentation of the numpy add function from the command line? (★☆☆)
+#+begin_src shell :results raw
+python -c "import numpy as np; np.info(np.add)"
+#+end_src
+
+#+RESULTS:
+add(x1, x2, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature, extobj])
+
+Add arguments element-wise.
+
+Parameters
+----------
+x1, x2 : array_like
+    The arrays to be added. If ``x1.shape != x2.shape``, they must be broadcastable to a common shape (which becomes the shape of the output).
+out : ndarray, None, or tuple of ndarray and None, optional
+    A location into which the result is stored. If provided, it must have
+    a shape that the inputs broadcast to. If not provided or None,
+    a freshly-allocated array is returned. A tuple (possible only as a
+    keyword argument) must have length equal to the number of outputs.
+where : array_like, optional
+    This condition is broadcast over the input. At locations where the
+    condition is True, the `out` array will be set to the ufunc result.
+    Elsewhere, the `out` array will retain its original value.
+    Note that if an uninitialized `out` array is created via the default
+    ``out=None``, locations within it where the condition is False will
+    remain uninitialized.
+**kwargs
+    For other keyword-only arguments, see the
+    :ref:`ufunc docs <ufuncs.kwargs>`.
+
+Returns
+-------
+add : ndarray or scalar
+    The sum of `x1` and `x2`, element-wise.
+    This is a scalar if both `x1` and `x2` are scalars.
+
+Notes
+-----
+Equivalent to `x1` + `x2` in terms of array broadcasting.
+
+Examples
+--------
+>>> np.add(1.0, 4.0)
+5.0
+>>> x1 = np.arange(9.0).reshape((3, 3))
+>>> x2 = np.arange(3.0)
+>>> np.add(x1, x2)
+array([[  0.,   2.,   4.],
+       [  3.,   5.,   7.],
+       [  6.,   8.,  10.]])
+add(x1, x2, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature, extobj])
+
+Add arguments element-wise.
+
+Parameters
+----------
+x1, x2 : array_like
+    The arrays to be added. If ``x1.shape != x2.shape``, they must be broadcastable to a common shape (which becomes the shape of the output).
+out : ndarray, None, or tuple of ndarray and None, optional
+    A location into which the result is stored. If provided, it must have
+    a shape that the inputs broadcast to. If not provided or None,
+    a freshly-allocated array is returned. A tuple (possible only as a
+    keyword argument) must have length equal to the number of outputs.
+where : array_like, optional
+    This condition is broadcast over the input. At locations where the
+    condition is True, the `out` array will be set to the ufunc result.
+    Elsewhere, the `out` array will retain its original value.
+    Note that if an uninitialized `out` array is created via the default
+    ``out=None``, locations within it where the condition is False will
+    remain uninitialized.
+**kwargs
+    For other keyword-only arguments, see the
+    :ref:`ufunc docs <ufuncs.kwargs>`.
+
+Returns
+-------
+add : ndarray or scalar
+    The sum of `x1` and `x2`, element-wise.
+    This is a scalar if both `x1` and `x2` are scalars.
+
+Notes
+-----
+Equivalent to `x1` + `x2` in terms of array broadcasting.
+
+Examples
+--------
+>>> np.add(1.0, 4.0)
+5.0
+>>> x1 = np.arange(9.0).reshape((3, 3))
+>>> x2 = np.arange(3.0)
+>>> np.add(x1, x2)
+array([[  0.,   2.,   4.],
+       [  3.,   5.,   7.],
+       [  6.,   8.,  10.]])
+
 * Create a null vector of size 10 but the fifth value which is 1 (★☆☆)
+#+begin_src python
+Z = np.zeros(10)
+Z[4] = 1
+Z
+#+end_src
+
+#+RESULTS[c66782760e6482ddb1336597bf319e72e5bd086c]:
+: array([0., 0., 0., 0., 1., 0., 0., 0., 0., 0.])
+
 * Create a vector with values ranging from 10 to 49 (★☆☆)
+#+begin_src python
+Z = np.arange(10, 50)
+Z
+#+end_src
+
+#+RESULTS[b16724270addddfd3bce9840486b59a1cbf55b7e]:
+: array([10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+:        27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43,
+:        44, 45, 46, 47, 48, 49])
+
 * Reverse a vector (first element becomes last) (★☆☆)
+#+begin_src python
+Z = np.arange(50)
+Z[::-1]
+#+end_src
+
+#+RESULTS[e30aa7ec7b3d1049c0363b96d7858b2003f37eb3]:
+: array([49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33,
+:        32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
+:        15, 14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0])
+
 * Create a 3x3 matrix with values ranging from 0 to 8 (★☆☆)
+#+begin_src python
+np.arange(9).reshape(3,3)
+#+end_src
+
+#+RESULTS[2698c399225a14b201d3e45944df57587357beb6]:
+: array([[0, 1, 2],
+:        [3, 4, 5],
+:        [6, 7, 8]])
+
 * Find indices of non-zero elements from [1,2,0,0,4,0] (★☆☆)
+#+begin_src python
+np.nonzero([1,2,0,0,4,0])
+#+end_src
+
+#+RESULTS[726d6f96310d9ee97ef85ea1ea1bf6b81caa4141]:
+| array | ((0 1 4)) |
+
 * Create a 3x3 identity matrix (★☆☆)
 * Create a 3x3x3 array with random values (★☆☆)
 * Create a 10x10 array with random values and find the minimum and maximum values (★☆☆)
