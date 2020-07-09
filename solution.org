@@ -1623,15 +1623,354 @@ print(R)
 #+end_example
 
 * Consider an array Z = [1,2,3,4,5,6,7,8,9,10,11,12,13,14], how to generate an array R = [[1,2,3,4], [2,3,4,5], [3,4,5,6], ..., [11,12,13,14]]? (★★★)
+#+begin_src python
+Z = np.arange(1,15,dtype=np.uint32)
+R = np.lib.stride_tricks.as_strided(Z,(11,4),(4,4))
+print(R)
+#+end_src
+
+#+RESULTS[3ee5b7137e8413c6b173dac11af8b263a49dd569]:
+: [[ 1  2  3  4]
+:  [ 2  3  4  5]
+:  [ 3  4  5  6]
+:  ...
+:  [ 9 10 11 12]
+:  [10 11 12 13]
+:  [11 12 13 14]]
+
 * Compute a matrix rank (★★★)
+#+begin_src python
+Z = np.random.uniform(0,1,(10,10))
+U, S, V = np.linalg.svd(Z) # Singular Value Decomposition
+rank = np.sum(S > 1e-10)
+print(rank)
+#+end_src
+
+#+RESULTS[217005f50ccb23931ab1d0a9d655f2f894a260a9]:
+: 10
+
 * How to find the most frequent value in an array?
+#+begin_src python
+Z = np.random.randint(0,10,50)
+print(Z)
+print(np.bincount(Z).argmax())
+#+end_src
+
+#+RESULTS[290b9b55f653ad12e670654c9be2523ec04299fc]:
+: [3 8 7 ... 5 4 4]
+: 4
+
 * Extract all the contiguous 3x3 blocks from a random 10x10 matrix (★★★)
+#+begin_src python
+Z = np.random.randint(0,5,(10,10))
+n = 3
+i = 1 + (Z.shape[0]-3)
+j = 1 + (Z.shape[1]-3)
+C = np.lib.stride_tricks.as_strided(Z, shape=(i, j, n, n), strides=Z.strides + Z.strides)
+print(C)
+#+end_src
+
+#+RESULTS[fd9c88107d9e3e0c02f1ecd256eccfe3f4eb0e79]:
+#+begin_example
+  [[[[3 4 1]
+     [4 4 0]
+     [2 3 3]]
+
+    [[4 1 1]
+     [4 0 2]
+     [3 3 4]]
+
+    [[1 1 3]
+     [0 2 2]
+     [3 4 1]]
+
+    ...
+
+    [[3 3 2]
+     [0 4 3]
+     [0 1 4]]
+
+    [[3 2 0]
+     [4 3 0]
+     [1 4 0]]
+
+    [[2 0 0]
+     [3 0 2]
+     [4 0 3]]]
+
+
+   [[[4 4 0]
+     [2 3 3]
+     [4 3 0]]
+
+    [[4 0 2]
+     [3 3 4]
+     [3 0 1]]
+
+    [[0 2 2]
+     [3 4 1]
+     [0 1 2]]
+
+    ...
+
+    [[0 4 3]
+     [0 1 4]
+     [2 4 4]]
+
+    [[4 3 0]
+     [1 4 0]
+     [4 4 2]]
+
+    [[3 0 2]
+     [4 0 3]
+     [4 2 3]]]
+
+
+   [[[2 3 3]
+     [4 3 0]
+     [2 2 4]]
+
+    [[3 3 4]
+     [3 0 1]
+     [2 4 1]]
+
+    [[3 4 1]
+     [0 1 2]
+     [4 1 3]]
+
+    ...
+
+    [[0 1 4]
+     [2 4 4]
+     [4 2 2]]
+
+    [[1 4 0]
+     [4 4 2]
+     [2 2 4]]
+
+    [[4 0 3]
+     [4 2 3]
+     [2 4 3]]]
+
+
+   ...
+
+
+   [[[3 3 1]
+     [0 4 0]
+     [4 1 1]]
+
+    [[3 1 3]
+     [4 0 4]
+     [1 1 4]]
+
+    [[1 3 0]
+     [0 4 1]
+     [1 4 4]]
+
+    ...
+
+    [[1 0 1]
+     [0 2 4]
+     [0 0 4]]
+
+    [[0 1 4]
+     [2 4 0]
+     [0 4 2]]
+
+    [[1 4 2]
+     [4 0 3]
+     [4 2 1]]]
+
+
+   [[[0 4 0]
+     [4 1 1]
+     [2 3 3]]
+
+    [[4 0 4]
+     [1 1 4]
+     [3 3 0]]
+
+    [[0 4 1]
+     [1 4 4]
+     [3 0 1]]
+
+    ...
+
+    [[0 2 4]
+     [0 0 4]
+     [4 3 0]]
+
+    [[2 4 0]
+     [0 4 2]
+     [3 0 4]]
+
+    [[4 0 3]
+     [4 2 1]
+     [0 4 1]]]
+
+
+   [[[4 1 1]
+     [2 3 3]
+     [4 1 0]]
+
+    [[1 1 4]
+     [3 3 0]
+     [1 0 2]]
+
+    [[1 4 4]
+     [3 0 1]
+     [0 2 0]]
+
+    ...
+
+    [[0 0 4]
+     [4 3 0]
+     [3 4 2]]
+
+    [[0 4 2]
+     [3 0 4]
+     [4 2 0]]
+
+    [[4 2 1]
+     [0 4 1]
+     [2 0 1]]]]
+#+end_example
+
 * Create a 2D array subclass such that Z[i,j] == Z[j,i] (★★★)
+#+begin_src python
+class Symetric(np.ndarray):
+    def __setitem__(self, index, value):
+        i,j = index
+        super(Symetric, self).__setitem__((i,j), value)
+        super(Symetric, self).__setitem__((j,i), value)
+
+def symetric(Z):
+    return np.asarray(Z + Z.T - np.diag(Z.diagonal())).view(Symetric)
+
+S = symetric(np.random.randint(0,10,[5,5]))
+S[2,3] = 42
+print(S)
+#+end_src
+
+#+RESULTS[4a1c4fc59dde4cf64259ac14d8653b17931dfe05]:
+: [[ 6 10  1  3 15]
+:  [10  6 10 14  8]
+:  [ 1 10  7 42 12]
+:  [ 3 14 42  0 12]
+:  [15  8 12 12  8]]
+
 * Consider a set of p matrices wich shape (n,n) and a set of p vectors with shape (n,1). How to compute the sum of of the p matrix products at once? (result has shape (n,1)) (★★★)
+#+begin_src python
+p, n = 10, 20
+M = np.ones((p,n,n))
+V = np.ones((p,n,1))
+S = np.tensordot(M, V, axes=[[0, 2], [0, 1]])
+print(S)
+
+# It works, because:
+# M is (p,n,n)
+# V is (p,n,1)
+# Thus, summing over the paired axes 0 and 0 (of M and V independently),
+# and 2 and 1, to remain with a (n,1) vector.
+#+end_src
+
+#+RESULTS[c38ff5c0f532893a30cc764e98cc239b682faf12]:
+: [[200.]
+:  [200.]
+:  [200.]
+:  ...
+:  [200.]
+:  [200.]
+:  [200.]]
+
 * Consider a 16x16 array, how to get the block-sum (block size is 4x4)? (★★★)
+#+begin_src python
+Z = np.ones((16,16))
+k = 4
+S = np.add.reduceat(np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),
+                                       np.arange(0, Z.shape[1], k), axis=1)
+print(S)
+#+end_src
+
+#+RESULTS[0638be1100f4cbd9003fe011c5567e7e8f3fe7d0]:
+: [[16. 16. 16. 16.]
+:  [16. 16. 16. 16.]
+:  [16. 16. 16. 16.]
+:  [16. 16. 16. 16.]]
+
 * How to implement the Game of Life using numpy arrays? (★★★)
+#+begin_src python
+def iterate(Z):
+    # Count neighbours
+    N = (Z[0:-2,0:-2] + Z[0:-2,1:-1] + Z[0:-2,2:] +
+         Z[1:-1,0:-2]                + Z[1:-1,2:] +
+         Z[2:  ,0:-2] + Z[2:  ,1:-1] + Z[2:  ,2:])
+
+    # Apply rules
+    birth = (N==3) & (Z[1:-1,1:-1]==0)
+    survive = ((N==2) | (N==3)) & (Z[1:-1,1:-1]==1)
+    Z[...] = 0
+    Z[1:-1,1:-1][birth | survive] = 1
+    return Z
+
+Z = np.random.randint(0,2,(50,50))
+for i in range(100): Z = iterate(Z)
+print(Z)
+#+end_src
+
+#+RESULTS[199f7c44665146ce7e5e41b9de132d2d25412f93]:
+: [[0 0 0 ... 0 0 0]
+:  [0 0 0 ... 0 0 0]
+:  [0 1 1 ... 0 0 0]
+:  ...
+:  [0 0 0 ... 0 0 0]
+:  [0 0 0 ... 0 0 0]
+:  [0 0 0 ... 0 0 0]]
+
 * How to get the n largest values of an array (★★★)
+#+begin_src python
+Z = np.arange(10000)
+np.random.shuffle(Z)
+n = 5
+
+# Slow
+print (Z[np.argsort(Z)[-n:]])
+
+# Fast
+print (Z[np.argpartition(-Z,n)[:n]])
+#+end_src
+
+#+RESULTS[fa20391ffa8a7f7bde94ca9cf4f1879f959b0e8e]:
+: [9995 9996 9997 9998 9999]
+: [9998 9996 9995 9997 9999]
+
 * Given an arbitrary number of vectors, build the cartesian product (every combinations of every item) (★★★)
+#+begin_src python
+def cartesian(arrays):
+    arrays = [np.asarray(a) for a in arrays]
+    shape = (len(x) for x in arrays)
+
+    ix = np.indices(shape, dtype=int)
+    ix = ix.reshape(len(arrays), -1).T
+
+    for n, arr in enumerate(arrays):
+        ix[:, n] = arrays[n][ix[:, n]]
+
+    return ix
+
+print (cartesian(([1, 2, 3], [4, 5], [6, 7])))
+#+end_src
+
+#+RESULTS[93c166d98b00858f2e6dfa1c4d13bc2553413374]:
+: [[1 4 6]
+:  [1 4 7]
+:  [1 5 6]
+:  ...
+:  [3 4 7]
+:  [3 5 6]
+:  [3 5 7]]
+
 * How to create a record array from a regular array? (★★★)
 * Consider a large vector Z, compute Z to the power of 3 using 3 different methods (★★★)
 * Consider two arrays A and B of shape (8,3) and (2,2). How to find rows of A that contain elements of each row of B regardless of the order of the elements in B? (★★★)
