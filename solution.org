@@ -1340,15 +1340,288 @@ print(Z0)
 : [1. 0. 0. ... 0. 0. 5.]
 
 * Consider an array of dimension (5,5,3), how to mulitply it by an array with dimensions (5,5)? (★★★)
+#+begin_src python
+A = np.ones([5,5,3])
+B = 2*np.ones([5,5])
+
+print(A)
+print(B)
+print(A * B[:,:,None])
+#+end_src
+
+#+RESULTS[2748b0283a22a51af8f87841779fb47dba8f7e1b]:
+#+begin_example
+  [[[1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]]
+
+   [[1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]]
+
+   [[1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]]
+
+   [[1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]]
+
+   [[1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]
+    [1. 1. 1.]]]
+  [[2. 2. 2. 2. 2.]
+   [2. 2. 2. 2. 2.]
+   [2. 2. 2. 2. 2.]
+   [2. 2. 2. 2. 2.]
+   [2. 2. 2. 2. 2.]]
+  [[[2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]]
+
+   [[2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]]
+
+   [[2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]]
+
+   [[2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]]
+
+   [[2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]
+    [2. 2. 2.]]]
+#+end_example
+
 * How to swap two rows of an array? (★★★)
+#+begin_src python
+A = np.arange(25).reshape(5,5)
+print(A)
+
+print('')
+
+A[[0,1]] = A[[1,0]]
+print(A)
+#+end_src
+
+#+RESULTS[83caf5adeaba255974effcd0e6ad3162162fa049]:
+#+begin_example
+  [[ 0  1  2  3  4]
+   [ 5  6  7  8  9]
+   [10 11 12 13 14]
+   [15 16 17 18 19]
+   [20 21 22 23 24]]
+
+  [[ 5  6  7  8  9]
+   [ 0  1  2  3  4]
+   [10 11 12 13 14]
+   [15 16 17 18 19]
+   [20 21 22 23 24]]
+#+end_example
+
+#+begin_src python
+a, b = 1, 2
+print(a, b)
+
+a, b = b, a
+print(a, b)
+#+end_src
+
+#+RESULTS[6f9d236930597a71d072c05f5e399938cd9b9527]:
+: 1 2
+: 2 1
+
 * Consider a set of 10 triplets describing 10 triangles (with shared vertices), find the set of unique line segments composing all the triangles (★★★)
+#+begin_src python
+faces = np.random.randint(0,100,(10,3))
+F = np.roll(faces.repeat(2,axis=1),-1,axis=1)
+F = F.reshape(len(F)*3,2)
+F = np.sort(F,axis=1)
+G = F.view(dtype=[('p0',F.dtype),('p1',F.dtype)])
+G = np.unique(G)
+print(G)
+#+end_src
+
+#+RESULTS[0deaa79a88117e1ee273d95c65cb2d70b4f7d623]:
+: [( 4, 14) ( 4, 69) ( 8, 62) ... (59, 90) (62, 80) (63, 82)]
+
 * Given an array C that is a bincount, how to produce an array A such that np.bincount(A) == C? (★★★)
+#+begin_src python
+C = np.bincount([1,1,2,3,4,4,6])
+print(C)
+
+A = np.repeat(np.arange(len(C)), C)
+print(A)
+#+end_src
+
+#+RESULTS[47d9d4425cf050b9501db4ecdd6003f94d77415c]:
+: [0 2 1 1 2 0 1]
+: [1 1 2 3 4 4 6]
+
 * How to compute averages using a sliding window over an array? (★★★)
+#+begin_src python
+def moving_average(a, n=3) :
+    ret = np.cumsum(a, dtype=float)
+    ret[n:] = ret[n:] - ret[:-n]
+    return ret[n - 1:] / n
+
+Z = np.arange(20)
+print(moving_average(Z, n=3))
+#+end_src
+
+#+RESULTS[00b867e6e32b9ff493c68643a5ac455b225cfb00]:
+: [ 1.  2.  3. ... 16. 17. 18.]
+
 * Consider a one-dimensional array Z, build a two-dimensional array whose first row is (Z[0],Z[1],Z[2]) and each subsequent row is shifted by 1 (last row should be (Z[-3],Z[-2],Z[-1]) (★★★)
+#+begin_src python
+def rolling(a, window):
+    shape = (a.size - window + 1, window)
+    strides = (a.itemsize, a.itemsize)
+    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
+
+Z = rolling(np.arange(10), 3)
+print(Z)
+#+end_src
+
+#+RESULTS[f5ee2b6b47307d20fb5b8899ceadb9d3acc4c493]:
+: [[0 1 2]
+:  [1 2 3]
+:  [2 3 4]
+:  ...
+:  [5 6 7]
+:  [6 7 8]
+:  [7 8 9]]
+
 * How to negate a boolean, or to change the sign of a float inplace? (★★★)
+#+begin_src python
+Z = np.random.randint(0,2,100)
+print(np.logical_not(Z, out=Z))
+
+Z = np.random.uniform(-1.0,1.0,100)
+print(np.negative(Z, out=Z))
+#+end_src
+
+#+RESULTS[57f972198e5386c7192f6acda9c60094af780289]:
+: [1 0 1 ... 0 1 0]
+: [-0.39837863  0.32746595 -0.38566086 ...  0.96927292 -0.71589599
+:  -0.95421937]
+
 * Consider 2 sets of points P0,P1 describing lines (2d) and a point p, how to compute distance from p to each line i (P0[i],P1[i])? (★★★)
+#+begin_src python
+def distance(P0, P1, p):
+    T = P1 - P0
+    L = (T**2).sum(axis=1)
+    U = -((P0[:,0]-p[...,0])*T[:,0] + (P0[:,1]-p[...,1])*T[:,1]) / L
+    U = U.reshape(len(U),1)
+    D = P0 + U*T - p
+    return np.sqrt((D**2).sum(axis=1))
+
+P0 = np.random.uniform(-10,10,(10,2))
+P1 = np.random.uniform(-10,10,(10,2))
+p  = np.random.uniform(-10,10,( 1,2))
+print(distance(P0, P1, p))
+#+end_src
+
+#+RESULTS[916a223e748fbb993c99b64c075f51f2c3871070]:
+: [ 3.79512205 12.71554744  7.15917658  1.1411666   2.42067946  3.700115
+:   5.4114321   3.27464447  8.08958279  5.47076797]
+
 * Consider 2 sets of points P0,P1 describing lines (2d) and a set of points P, how to compute distance from each point j (P[j]) to each line i (P0[i],P1[i])? (★★★)
+#+begin_src python
+# based on distance function from previous question
+P0 = np.random.uniform(-10, 10, (10,2))
+P1 = np.random.uniform(-10,10,(10,2))
+p = np.random.uniform(-10, 10, (10,2))
+print(np.array([distance(P0,P1,p_i) for p_i in p]))
+#+end_src
+
+#+RESULTS[1c02685904c2ca35771bd776ffe03226e1590a56]:
+#+begin_example
+  [[ 9.07062471  7.64161941  1.71582096 ...  3.97686406 11.73708619
+     4.30187844]
+   [12.23271933 10.13700609  8.54663983 ...  5.69191276  2.32877615
+     0.65670898]
+   [ 9.55937896  8.16936989  1.96657542 ...  4.54871966 12.76251887
+     5.18450089]
+   ...
+   [15.85139311 13.72893311 12.19114274 ...  9.244566    1.84242158
+     2.21575655]
+   [ 4.88792287  2.88127224  0.95232878 ...  1.443782    2.53263741
+     6.08322248]
+   [ 9.33234924  8.01367491  1.34314077 ...  4.47626332 14.30099137
+     5.81294658]]
+#+end_example
+
 * Consider an arbitrary array, write a function that extract a subpart with a fixed shape and centered on a given element (pad with a fill value when necessary) (★★★)
+#+begin_src python
+Z = np.random.randint(0,10,(10,10))
+shape = (5,5)
+fill  = 0
+position = (1,1)
+
+R = np.ones(shape, dtype=Z.dtype)*fill
+P  = np.array(list(position)).astype(int)
+Rs = np.array(list(R.shape)).astype(int)
+Zs = np.array(list(Z.shape)).astype(int)
+
+R_start = np.zeros((len(shape),)).astype(int)
+R_stop  = np.array(list(shape)).astype(int)
+Z_start = (P-Rs//2)
+Z_stop  = (P+Rs//2)+Rs%2
+
+R_start = (R_start - np.minimum(Z_start,0)).tolist()
+Z_start = (np.maximum(Z_start,0)).tolist()
+R_stop = np.maximum(R_start, (R_stop - np.maximum(Z_stop-Zs,0))).tolist()
+Z_stop = (np.minimum(Z_stop,Zs)).tolist()
+
+r = [slice(start,stop) for start,stop in zip(R_start,R_stop)]
+z = [slice(start,stop) for start,stop in zip(Z_start,Z_stop)]
+R[r] = Z[z]
+print(Z)
+print(R)
+#+end_src
+
+#+RESULTS[92ed0215b420406bd60e57b0456b051869ba1fef]:
+#+begin_example
+  [[0 1 6 ... 7 1 9]
+   [6 7 8 ... 1 6 0]
+   [3 1 2 ... 1 0 4]
+   ...
+   [5 0 5 ... 4 7 9]
+   [2 7 2 ... 0 5 3]
+   [8 8 2 ... 8 1 7]]
+  [[0 0 0 0 0]
+   [0 0 1 6 8]
+   [0 6 7 8 1]
+   [0 3 1 2 4]
+   [0 5 1 2 9]]
+  <ipython-input-254-f2b5781f38bf>:23: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+    R[r] = Z[z]
+#+end_example
+
 * Consider an array Z = [1,2,3,4,5,6,7,8,9,10,11,12,13,14], how to generate an array R = [[1,2,3,4], [2,3,4,5], [3,4,5,6], ..., [11,12,13,14]]? (★★★)
 * Compute a matrix rank (★★★)
 * How to find the most frequent value in an array?
