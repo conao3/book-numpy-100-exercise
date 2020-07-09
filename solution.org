@@ -576,15 +576,165 @@ print(np.intersect1d(Z1, Z2))
 : [6 7 8 9]
 
 * How to ignore all numpy warnings (not recommended)? (★☆☆)
+=hint: np.seterr, np.errstate=
+#+begin_src python
+# Suicide mode on
+defaults = np.seterr(all="ignore")
+Z = np.ones(1) / 0
+
+# Back to sanity
+_ = np.seterr(**defaults)
+
+# Equivalently with a context manager
+with np.errstate(all="ignore"):
+    np.arange(3) / 0
+#+end_src
+
+#+RESULTS[70f3400180561d2ecd718041e51cb379a340a0a7]:
+
 * Is the following expressions true? (★☆☆)
+#+begin_src python
+np.sqrt(-1) == np.emath.sqrt(-1)
+#+end_src
+
+#+RESULTS[33667aac162d9c5774492727b257ed540e4c5879]:
+:RESULTS:
+: <ipython-input-130-16339fbc685e>:1: RuntimeWarning: invalid value encountered in sqrt
+:   np.sqrt(-1) == np.emath.sqrt(-1)
+: False
+:END:
+
+=np.emath= for imaginary values.
+#+begin_src python
+print(np.sqrt(-1))
+print(np.emath.sqrt(-1))
+#+end_src
+
+#+RESULTS[d26c2561cf69dea5e28334f24feeb8efd25ef3b6]:
+: nan
+: 1j
+: <ipython-input-131-54f6324019e1>:1: RuntimeWarning: invalid value encountered in sqrt
+:   print(np.sqrt(-1))
+
 * How to get the dates of yesterday, today and tomorrow? (★☆☆)
+#+begin_src python
+yesterday = np.datetime64('today') - np.timedelta64(1)
+today     = np.datetime64('today')
+tomorrow  = np.datetime64('today') + np.timedelta64(1)
+print(yesterday, today, tomorrow)
+#+end_src
+
+#+RESULTS[ca6666a661b7d0059e77d1815363f11636db0076]:
+: 2020-07-08 2020-07-09 2020-07-10
+
 * How to get all the dates corresponding to the month of July 2016? (★★☆)
+#+begin_src python
+Z = np.arange('2016-07', '2016-08', dtype='datetime64[D]')
+print(Z)
+#+end_src
+
+#+RESULTS[e1fbee91aadd446d1002325beb87f9baa732a19d]:
+: ['2016-07-01' '2016-07-02' '2016-07-03' '2016-07-04' '2016-07-05'
+:  '2016-07-06' '2016-07-07' '2016-07-08' '2016-07-09' '2016-07-10'
+:  '2016-07-11' '2016-07-12' '2016-07-13' '2016-07-14' '2016-07-15'
+:  '2016-07-16' '2016-07-17' '2016-07-18' '2016-07-19' '2016-07-20'
+:  '2016-07-21' '2016-07-22' '2016-07-23' '2016-07-24' '2016-07-25'
+:  '2016-07-26' '2016-07-27' '2016-07-28' '2016-07-29' '2016-07-30'
+:  '2016-07-31']
+
 * How to compute ((A+B)*(-A/2)) in place (without copy)? (★★☆)
+#+begin_src python
+A = np.ones(3)*1
+B = np.ones(3)*2
+C = np.ones(3)*3
+print(np.add(A,B,out=B))
+print(np.divide(A,2,out=A))
+print(np.negative(A,out=A))
+print(np.multiply(A,B,out=A))
+#+end_src
+
+#+RESULTS[5b47394486af850b53f33e91b76d26a569fad121]:
+: [3. 3. 3.]
+: [0.5 0.5 0.5]
+: [-0.5 -0.5 -0.5]
+: [-1.5 -1.5 -1.5]
+
 * Extract the integer part of a random array of positive numbers using 4 different methods (★★☆)
+#+begin_src python
+Z = np.random.uniform(0, 10, 10)
+
+print(Z - Z%1)
+print(Z // 1)
+print(np.floor(Z))
+print(Z.astype(int))
+print(np.trunc(Z))
+#+end_src
+
+#+RESULTS[04ee0f2ce33a7a416ef4dc3ce8140847bd15d268]:
+: [0. 0. 9. 2. 5. 3. 6. 5. 9. 3.]
+: [0. 0. 9. 2. 5. 3. 6. 5. 9. 3.]
+: [0. 0. 9. 2. 5. 3. 6. 5. 9. 3.]
+: [0 0 9 2 5 3 6 5 9 3]
+: [0. 0. 9. 2. 5. 3. 6. 5. 9. 3.]
+
 * Create a 5x5 matrix with row values ranging from 0 to 4 (★★☆)
+#+begin_src python
+Z = np.zeros([5,5])
+Z += np.arange(5)
+Z
+#+end_src
+
+#+RESULTS[0b6581ec61d4c28e546bf1191cc6a168ce30d2d5]:
+: array([[0., 1., 2., 3., 4.],
+:        [0., 1., 2., 3., 4.],
+:        [0., 1., 2., 3., 4.],
+:        [0., 1., 2., 3., 4.],
+:        [0., 1., 2., 3., 4.]])
+
 * Consider a generator function that generates 10 integers and use it to build an array (★☆☆)
+#+begin_src python
+  def generate():
+      for x in range(10):
+          yield x
+
+  Z = np.fromiter(generate(), dtype=float, count=-1)
+  Z
+#+end_src
+
+#+RESULTS[9bd13e841f494deb5628fd0a7438f612774c334b]:
+: array([0., 1., 2., 3., 4., 5., 6., 7., 8., 9.])
+
 * Create a vector of size 10 with values ranging from 0 to 1, both excluded (★★☆)
+#+begin_src python
+A = np.linspace(0, 1, 10)
+B = np.linspace(0, 1, 11)[1:]
+C = np.linspace(0, 1, 11, endpoint=False)[1:]
+print(A)
+print(B)
+print(C)
+#+end_src
+
+#+RESULTS[1722567bf030fa6305b7a79d469723cff1c57d06]:
+: [0.         0.11111111 0.22222222 0.33333333 0.44444444 0.55555556
+:  0.66666667 0.77777778 0.88888889 1.        ]
+: [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1. ]
+: [0.09090909 0.18181818 0.27272727 0.36363636 0.45454545 0.54545455
+:  0.63636364 0.72727273 0.81818182 0.90909091]
+
 * Create a random vector of size 10 and sort it (★★☆)
+#+begin_src python
+Z = np.random.random(10)
+print(Z)
+Z.sort()
+print(Z)
+#+end_src
+
+#+RESULTS[9b222671a298365e23941658ec4fb321225372d5]:
+: [0.46028527 0.496102   0.77173058 0.88639274 0.9453273  0.75126499
+:  0.90458863 0.74095007 0.11570777 0.49666148]
+: [0.11570777 0.46028527 0.496102   0.49666148 0.74095007 0.75126499
+:  0.77173058 0.88639274 0.90458863 0.9453273 ]
+
 * How to sum a small array faster than np.sum? (★★☆)
 * Consider two random array A and B, check if they are equal (★★☆)
 * Make an array immutable (read-only) (★★☆)
