@@ -402,15 +402,179 @@ print(np.unravel_index(99, [6,7,8]))
 : (1, 5, 3)
 
 * Create a checkerboard 8x8 matrix using the tile function (★☆☆)
+#+begin_src python
+np.tile(np.array([[0,1], [1,0]]), [4,4])
+#+end_src
+
+#+RESULTS[0ce5d61572a68d66ea20e0e95419c6330292bcea]:
+: array([[0, 1, 0, 1, 0, 1, 0, 1],
+:        [1, 0, 1, 0, 1, 0, 1, 0],
+:        [0, 1, 0, 1, 0, 1, 0, 1],
+:        [1, 0, 1, 0, 1, 0, 1, 0],
+:        [0, 1, 0, 1, 0, 1, 0, 1],
+:        [1, 0, 1, 0, 1, 0, 1, 0],
+:        [0, 1, 0, 1, 0, 1, 0, 1],
+:        [1, 0, 1, 0, 1, 0, 1, 0]])
+
 * Normalize a 5x5 random matrix (★☆☆)
+#+begin_src python
+Z = np.random.random([5,5])
+Z = (Z-Z.mean())/Z.std()
+Z
+#+end_src
+
+#+RESULTS[3162b55f054c4c53b21e0d88de8e35d2925b11c5]:
+: array([[-1.42216779, -0.82322427,  0.71380461, -0.25725093,  0.39727282],
+:        [-0.39995888, -1.53574037,  1.59672587,  1.37494787, -0.26295408],
+:        [ 1.58107555, -1.27196801,  0.94770613, -0.65513144,  0.29574934],
+:        [ 0.60065036, -1.34652242,  0.3533401 ,  0.16422289,  1.41900219],
+:        [-1.13060947, -0.82508816, -0.9350356 ,  1.35229804,  0.06885566]])
+
 * Create a custom dtype that describes a color as four unsigned bytes (RGBA) (★☆☆)
+#+begin_src python
+  color = np.dtype([("r", np.ubyte, 1),
+                    ("g", np.ubyte, 1),
+                    ("b", np.ubyte, 1),
+                    ("a", np.ubyte, 1)])
+  color
+#+end_src
+
+#+RESULTS[6696b15a37fac92fb02db2f0bb0f12132731e9eb]:
+:RESULTS:
+: <ipython-input-98-4daa7c2f2b60>:1: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+:   color = np.dtype([("r", np.ubyte, 1),
+: dtype([('r', 'u1'), ('g', 'u1'), ('b', 'u1'), ('a', 'u1')])
+:END:
+
 * Multiply a 5x3 matrix by a 3x2 matrix (real matrix product) (★☆☆)
+#+begin_src python
+  A = np.array([[1, 2, 3],
+                [2, 3, 4],
+                [3, 4, 5],
+                [4, 5, 6],
+                [5, 6, 7]])
+  B = np.array([[1, 0],
+                [1, 0],
+                [1, 0]])
+  print('A:\n', A)
+  print('B:\n', B)
+  print('A@B\n', A@B)
+#+end_src
+
+#+RESULTS[da398d16f6cb38b162afd0568d99b248ba97d33a]:
+#+begin_example
+  A:
+   [[1 2 3]
+   [2 3 4]
+   [3 4 5]
+   [4 5 6]
+   [5 6 7]]
+  B:
+   [[1 0]
+   [1 0]
+   [1 0]]
+  A@B
+   [[ 6  0]
+   [ 9  0]
+   [12  0]
+   [15  0]
+   [18  0]]
+#+end_example
+
 * Given a 1D array, negate all elements which are between 3 and 8, in place. (★☆☆)
+#+begin_src python
+Z = np.arange(10) + 1
+Z[(3<=Z) & (Z<=8)] *= -1
+Z
+#+end_src
+
+#+RESULTS[4c8e8a49a001f7a86a3e6a8de2fccc3e6e59b3eb]:
+: array([ 1,  2, -3, -4, -5, -6, -7, -8,  9, 10])
+
 * What is the output of the following script? (★☆☆)
+#+begin_src python
+# Author: Jake VanderPlas
+
+print(sum(range(5),-1))
+print(np.sum(range(5),-1))
+#+end_src
+
+#+RESULTS[c07a7b04be11212a2a567206701199ba5fb45b5e]:
+: 10
+: 10
+
 * Consider an integer vector Z, which of these expressions are legal? (★☆☆)
+#+begin_src python
+Z = np.arange(5) + 1
+Z
+#+end_src
+
+#+RESULTS[3b7a8872798f571bdfe5b715d54da7ab2d644df0]:
+: array([1, 2, 3, 4, 5])
+
 * What are the result of the following expressions?
+#+begin_src python
+print(np.array(0) / np.array(0))
+print(np.array(0) // np.array(0))
+print(np.array([np.nan]).astype(int).astype(float))
+#+end_src
+
+#+RESULTS[fc77ea5a2d03b9d8c5682fbe2c5fdcb6347dfebe]:
+: nan
+: 0
+: [-9.22337204e+18]
+: <ipython-input-118-2a10de0ee61b>:1: RuntimeWarning: invalid value encountered in true_divide
+:   print(np.array(0) / np.array(0))
+: <ipython-input-118-2a10de0ee61b>:2: RuntimeWarning: divide by zero encountered in floor_divide
+:   print(np.array(0) // np.array(0))
+
+- / :: 割り算。(int)/(int)=(float)
+- // :: 切り捨て割り算。(int)//(int)=(int)
+
+#+begin_src python
+print(12/5)
+print(12//5)
+#+end_src
+
+#+RESULTS[7fea5c478641049958f7da6e5f3160dc43709d99]:
+: 2.4
+: 2
+
 * How to round away from zero a float array ? (★☆☆)
+#+begin_src python
+Z = np.random.uniform(-10, 10, 10)
+Z
+#+end_src
+
+#+RESULTS[aaf0bc83d3a760f9ddf2f16050cd6adbc98824ed]:
+: array([ 9.80307185,  7.98963608, -7.4362234 ,  8.11567025,  7.20620054,
+:        -0.25188165,  3.21786565, -0.64835291,  9.11848612, -2.3105525 ])
+
+#+begin_src python
+print(np.copysign(np.ceil(np.abs(Z)), Z))
+
+# More readable but less efficient
+print(np.where(Z>0, np.ceil(Z), np.floor(Z)))
+#+end_src
+
+#+RESULTS[f8c0e318dd27bdf94fdf2f06174fed620cfcd0af]:
+: [10.  8. -8.  9.  8. -1.  4. -1. 10. -3.]
+: [10.  8. -8.  9.  8. -1.  4. -1. 10. -3.]
+
 * How to find common values between two arrays? (★☆☆)
+#+begin_src python
+Z1 = np.random.randint(0, 10, 10)
+Z2 = np.random.randint(0, 10, 10)
+print(Z1)
+print(Z2)
+print(np.intersect1d(Z1, Z2))
+#+end_src
+
+#+RESULTS[66a9b70b73256860e48b88b8b1d06944069503fb]:
+: [5 7 8 8 3 5 6 3 5 9]
+: [0 7 6 0 8 9 7 9 4 8]
+: [6 7 8 9]
+
 * How to ignore all numpy warnings (not recommended)? (★☆☆)
 * Is the following expressions true? (★☆☆)
 * How to get the dates of yesterday, today and tomorrow? (★☆☆)
