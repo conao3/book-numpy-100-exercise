@@ -1159,15 +1159,186 @@ print((~Z.any(axis=0)).any())
 : False
 
 * Find the nearest value from a given value in an array (★★☆)
+#+begin_src python
+Z = np.random.uniform(0,1,10)
+print(Z)
+
+z = 0.5
+m = Z.flat[np.abs(Z - z).argmin()]
+print(m)
+
+# another solution
+print(Z[np.abs((Z - z)).argmin()])
+#+end_src
+
+#+RESULTS[8b163de4d0adf10c254a012bc74d490f3ecc698f]:
+: [0.74255459 0.67514144 0.86650577 0.11337188 0.74309453 0.76125672
+:  0.0247294  0.93722921 0.38057061 0.13654248]
+: 0.3805706077931119
+: 0.3805706077931119
+
 * Considering two arrays with shape (1,3) and (3,1), how to compute their sum using an iterator? (★★☆)
+#+begin_src python
+A = np.arange(3).reshape(3,1)
+B = np.arange(3).reshape(1,3)
+it = np.nditer([A,B,None])
+for x,y,z in it: z[...] = x + y
+print(it.operands[2])
+#+end_src
+
+#+RESULTS[647041ef77e7d8a33639a6422fe84919bf5117a1]:
+: [[0 1 2]
+:  [1 2 3]
+:  [2 3 4]]
+
 * Create an array class that has a name attribute (★★☆)
+#+begin_src python
+class NamedArray(np.ndarray):
+    def __new__(cls, array, name="no name"):
+        obj = np.asarray(array).view(cls)
+        obj.name = name
+        return obj
+
+    def __array_finalize__(self, obj):
+        if obj is None: return
+        self.info = getattr(obj, 'name', "no name")
+
+Z = NamedArray(np.arange(10), "range_10")
+print(Z.name)
+#+end_src
+
+#+RESULTS[db8105f4f3107a71ea28ac94f6888ad668ac06ce]:
+: range_10
+
 * Consider a given vector, how to add 1 to each element indexed by a second vector (be careful with repeated indices)? (★★★)
+#+begin_src python
+Z = np.ones(10)
+I = np.random.randint(0,len(Z),20)
+
+Z1 = Z.copy()
+Z2 = Z.copy()
+print(I)
+
+Z1 += np.bincount(I, minlength=len(Z1))
+print(Z1)
+
+# Another solution
+# Author: Bartosz Telenczuk
+np.add.at(Z2, I, 1)
+print(Z2)
+#+end_src
+
+#+RESULTS[ec71146282325d57e3f1bee9cbccea86275c0a0c]:
+: [0 5 8 ... 8 2 8]
+: [3. 4. 3. 2. 2. 3. 3. 4. 5. 1.]
+: [3. 4. 3. 2. 2. 3. 3. 4. 5. 1.]
+
 * How to accumulate elements of a vector (X) to an array (F) based on an index list (I)? (★★★)
+#+begin_src python
+X = [1,2,3,4,5,6]
+I = [1,3,9,3,4,1]
+F = np.bincount(I, X)
+print(F)
+#+end_src
+
+#+RESULTS[6c3f65dfdfe26d1927b1813a17ee7f988485f698]:
+: [0. 7. 0. 6. 5. 0. 0. 0. 0. 3.]
+
 * Considering a (w,h,3) image of (dtype=ubyte), compute the number of unique colors (★★★)
+#+begin_src python
+w,h = 16,16
+I = np.random.randint(0,2,(h,w,3)).astype(np.ubyte)
+F = I[...,0]*256*256 + I[...,1]*256 +I[...,2]
+n = len(np.unique(F))
+print(np.unique(I))
+#+end_src
+
+#+RESULTS[07decb3dcf72cafcefffe151d95d1e6e28023063]:
+: [0 1]
+
 * Considering a four dimensions array, how to get sum over the last two axis at once? (★★★)
+#+begin_src python
+  A = np.random.randint(0,10,(3,4,3,4))
+  # solution by passing a tuple of axes (introduced in numpy 1.7.0)
+  s = A.sum(axis=(-2,-1))
+  print(s)
+  # solution by flattening the last two dimensions into one
+  # (useful for functions that don't accept tuples for axis argument)
+  s = A.reshape(A.shape[:-2] + (-1,)).sum(axis=-1)
+  print(s)
+#+end_src
+
+#+RESULTS[dabc93f05c2c6e75551343deafa2e85d061d95ea]:
+: [[65 70 66 48]
+:  [32 59 55 51]
+:  [54 66 51 58]]
+: [[65 70 66 48]
+:  [32 59 55 51]
+:  [54 66 51 58]]
+
 * Considering a one-dimensional vector D, how to compute means of subsets of D using a vector S of same size describing subset indices? (★★★)
+#+begin_src python
+D = np.random.uniform(0,1,100)
+S = np.random.randint(0,10,100)
+D_sums = np.bincount(S, weights=D)
+D_counts = np.bincount(S)
+D_means = D_sums / D_counts
+print(D_means)
+
+# Pandas solution as a reference due to more intuitive code
+import pandas as pd
+print(pd.Series(D).groupby(S).mean())
+#+end_src
+
+#+RESULTS[b518028ca135462532f0628fe60ab6fec7b6a666]:
+#+begin_example
+  [0.4481148  0.52371236 0.40292406 0.45847934 0.55480371 0.54602552
+   0.28546423 0.54097609 0.59756542 0.41708922]
+  0    0.448115
+  1    0.523712
+  2    0.402924
+  3    0.458479
+  4    0.554804
+  5    0.546026
+  6    0.285464
+  7    0.540976
+  8    0.597565
+  9    0.417089
+  dtype: float64
+#+end_example
+
 * How to get the diagonal of a dot product? (★★★)
+#+begin_src python
+A = np.random.uniform(0,1,(5,5))
+B = np.random.uniform(0,1,(5,5))
+
+# Slow version
+print(np.diag(np.dot(A, B)))
+
+# Fast version
+print(np.sum(A * B.T, axis=1))
+
+# Faster version
+print(np.einsum("ij,ji->i", A, B))
+#+end_src
+
+#+RESULTS[55584df2184813fd3ca9e2f83657ff3f586dac9a]:
+: [0.79104589 1.07520992 0.79011457 0.96047492 0.41105036]
+: [0.79104589 1.07520992 0.79011457 0.96047492 0.41105036]
+: [0.79104589 1.07520992 0.79011457 0.96047492 0.41105036]
+
 * Consider the vector [1, 2, 3, 4, 5], how to build a new vector with 3 consecutive zeros interleaved between each value? (★★★)
+#+begin_src python
+Z = np.array([1,2,3,4,5])
+nz = 3
+Z0 = np.zeros(len(Z) + (len(Z)-1)*(nz))
+Z0[::nz+1] = Z
+print(Z0)
+#+end_src
+
+#+RESULTS[e3961be2a4f94eb77aecdbe47012496447cd4a95]:
+: [1. 0. 0. ... 0. 0. 5.]
+
 * Consider an array of dimension (5,5,3), how to mulitply it by an array with dimensions (5,5)? (★★★)
 * How to swap two rows of an array? (★★★)
 * Consider a set of 10 triplets describing 10 triangles (with shared vertices), find the set of unique line segments composing all the triangles (★★★)
