@@ -1972,12 +1972,206 @@ print (cartesian(([1, 2, 3], [4, 5], [6, 7])))
 :  [3 5 7]]
 
 * How to create a record array from a regular array? (★★★)
+#+begin_src python
+Z = np.array([("Hello", 2.5, 3),
+              ("World", 3.6, 2)])
+R = np.core.records.fromarrays(Z.T,
+                               names='col1, col2, col3',
+                               formats = 'S8, f8, i8')
+print(R)
+#+end_src
+
+#+RESULTS[85a08fd500b57e401761bcd9a041991093e944ef]:
+: [(b'Hello', 2.5, 3) (b'World', 3.6, 2)]
+
 * Consider a large vector Z, compute Z to the power of 3 using 3 different methods (★★★)
+#+begin_src python
+x = np.random.rand(int(5e7))
+
+%timeit np.power(x,3)
+%timeit x*x*x
+%timeit np.einsum('i,i,i->i',x,x,x)
+#+end_src
+
+#+RESULTS[41b58a81ac5180c6d108208085b59d3e7c268309]:
+: 842 ms ± 603 µs per loop (mean ± std. dev. of 7 runs, 1 loop each)
+: 108 ms ± 1.58 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+: 103 ms ± 1.13 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)
+
 * Consider two arrays A and B of shape (8,3) and (2,2). How to find rows of A that contain elements of each row of B regardless of the order of the elements in B? (★★★)
+#+begin_src python
+A = np.random.randint(0,5,(8,3))
+B = np.random.randint(0,5,(2,2))
+
+C = (A[..., np.newaxis, np.newaxis] == B)
+rows = np.where(C.any((3,1)).all(1))[0]
+print(rows)
+#+end_src
+
+#+RESULTS[0ffe33d421867e160d9585fa804ae722a73b8e26]:
+: [3 5 6]
+
 * Considering a 10x3 matrix, extract rows with unequal values (e.g. [2,2,3]) (★★★)
+#+begin_src python
+Z = np.random.randint(0,5,(10,3))
+print(Z)
+# solution for arrays of all dtypes (including string arrays and record arrays)
+E = np.all(Z[:,1:] == Z[:,:-1], axis=1)
+U = Z[~E]
+print(U)
+# soluiton for numerical arrays only, will work for any number of columns in Z
+U = Z[Z.max(axis=1) != Z.min(axis=1),:]
+print(U)
+#+end_src
+
+#+RESULTS[915b17a2ec61e2c0e0387e38bffedee6cca391a7]:
+#+begin_example
+  [[4 3 2]
+   [4 2 0]
+   [4 2 0]
+   ...
+   [3 3 4]
+   [0 1 1]
+   [1 0 0]]
+  [[4 3 2]
+   [4 2 0]
+   [4 2 0]
+   ...
+   [3 3 4]
+   [0 1 1]
+   [1 0 0]]
+  [[4 3 2]
+   [4 2 0]
+   [4 2 0]
+   ...
+   [3 3 4]
+   [0 1 1]
+   [1 0 0]]
+#+end_example
+
 * Convert a vector of ints into a matrix binary representation (★★★)
+#+begin_src python
+I = np.array([0, 1, 2, 3, 15, 16, 32, 64, 128])
+B = ((I.reshape(-1,1) & (2**np.arange(8))) != 0).astype(int)
+print(B[:,::-1])
+
+# Author: Daniel T. McDonald
+
+I = np.array([0, 1, 2, 3, 15, 16, 32, 64, 128], dtype=np.uint8)
+print(np.unpackbits(I[:, np.newaxis], axis=1))
+#+end_src
+
+#+RESULTS[aaa638a36daa8770207e944d5b5b6ea934a93733]:
+#+begin_example
+  [[0 0 0 ... 0 0 0]
+   [0 0 0 ... 0 0 1]
+   [0 0 0 ... 0 1 0]
+   ...
+   [0 0 1 ... 0 0 0]
+   [0 1 0 ... 0 0 0]
+   [1 0 0 ... 0 0 0]]
+  [[0 0 0 ... 0 0 0]
+   [0 0 0 ... 0 0 1]
+   [0 0 0 ... 0 1 0]
+   ...
+   [0 0 1 ... 0 0 0]
+   [0 1 0 ... 0 0 0]
+   [1 0 0 ... 0 0 0]]
+#+end_example
+
 * Given a two dimensional array, how to extract unique rows? (★★★)
+#+begin_src python
+Z = np.random.randint(0,2,[6,3])
+T = np.ascontiguousarray(Z).view(np.dtype((np.void, Z.dtype.itemsize * Z.shape[1])))
+_, idx = np.unique(T, return_index=True)
+uZ = Z[idx]
+print(uZ)
+
+# Author: Andreas Kouzelis
+# NumPy >= 1.13
+uZ = np.unique(Z, axis=0)
+print(uZ)
+#+end_src
+
+#+RESULTS[d9a043b167c949c3abddad8e673545403f28954b]:
+: [[0 0 1]
+:  [0 1 0]
+:  [0 1 1]
+:  [1 1 0]
+:  [1 1 1]]
+: [[0 0 1]
+:  [0 1 0]
+:  [0 1 1]
+:  [1 1 0]
+:  [1 1 1]]
+
 * Considering 2 vectors A & B, write the einsum equivalent of inner, outer, sum, and mul function (★★★)
+#+begin_src python
+A = np.random.uniform(0,1,10)
+B = np.random.uniform(0,1,10)
+
+print(np.einsum('i->', A))       # np.sum(A)
+print(np.einsum('i,i->i', A, B)) # A * B
+print(np.einsum('i,i', A, B))    # np.inner(A, B)
+print(np.einsum('i,j->ij', A, B))    # np.outer(A, B)
+#+end_src
+
+#+RESULTS[04f67528b067118d98ae59aacf0c4304b9d26523]:
+#+begin_example
+  5.873001245191606
+  [0.37005107 0.49289107 0.05319289 0.83864943 0.32025562 0.297294
+   0.49586683 0.38049717 0.28451785 0.35536976]
+  3.8885857040539307
+  [[0.37005107 0.3586127  0.06747037 ... 0.34606986 0.47410271 0.39187435]
+   [0.5086124  0.49289107 0.09273387 ... 0.47565171 0.65162496 0.53860716]
+   [0.29174417 0.28272629 0.05319289 ... 0.27283765 0.37377733 0.3089494 ]
+   ...
+   [0.40686405 0.39428778 0.07418238 ... 0.38049717 0.52126683 0.43085833]
+   [0.22207453 0.21521015 0.04049023 ... 0.20768296 0.28451785 0.23517109]
+   [0.3355794  0.32520656 0.06118525 ... 0.31383214 0.42993823 0.35536976]]
+#+end_example
+
 * Considering a path described by two vectors (X,Y), how to sample it using equidistant samples (★★★)?
+#+begin_src python
+phi = np.arange(0, 10*np.pi, 0.1)
+a = 1
+x = a*phi*np.cos(phi)
+y = a*phi*np.sin(phi)
+
+dr = (np.diff(x)**2 + np.diff(y)**2)**.5 # segment lengths
+r = np.zeros_like(x)
+r[1:] = np.cumsum(dr)                # integrate path
+r_int = np.linspace(0, r.max(), 200) # regular spaced path
+x_int = np.interp(r_int, r, x)       # integrate path
+y_int = np.interp(r_int, r, y)
+#+end_src
+
+#+RESULTS[b07c0fcb3bf91d5128b723c760aec85872b8b62b]:
+
 * Given an integer n and a 2D array X, select from X the rows which can be interpreted as draws from a multinomial distribution with n degrees, i.e., the rows which only contain integers and which sum to n. (★★★)
+#+begin_src python
+X = np.asarray([[1.0, 0.0, 3.0, 8.0],
+                [2.0, 0.0, 1.0, 1.0],
+                [1.5, 2.5, 1.0, 0.0]])
+n = 4
+M = np.logical_and.reduce(np.mod(X, 1) == 0, axis=-1)
+M &= (X.sum(axis=-1) == n)
+print(X[M])
+#+end_src
+
+#+RESULTS[e59dc5eecd5f196546f84b50bf56d4ed696230d8]:
+: [[2. 0. 1. 1.]]
+
 * Compute bootstrapped 95% confidence intervals for the mean of a 1D array X (i.e., resample the elements of an array with replacement N times, compute the mean of each sample, and then compute percentiles over the means). (★★★)
+#+begin_src python
+X = np.asarray([[1.0, 0.0, 3.0, 8.0],
+                [2.0, 0.0, 1.0, 1.0],
+                [1.5, 2.5, 1.0, 0.0]])
+n = 4
+M = np.logical_and.reduce(np.mod(X, 1) == 0, axis=-1)
+M &= (X.sum(axis=-1) == n)
+print(X[M])
+#+end_src
+
+#+RESULTS[e59dc5eecd5f196546f84b50bf56d4ed696230d8]:
+: [[2. 0. 1. 1.]]
