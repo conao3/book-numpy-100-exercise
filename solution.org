@@ -736,15 +736,221 @@ print(Z)
 :  0.77173058 0.88639274 0.90458863 0.9453273 ]
 
 * How to sum a small array faster than np.sum? (★★☆)
+#+begin_src python
+Z = np.arange(10)
+np.add.reduce(Z)
+#+end_src
+
+#+RESULTS[87b9dfc44ae15b6bc4f890a4cfba63116f390883]:
+: 45
+
 * Consider two random array A and B, check if they are equal (★★☆)
+#+begin_src python
+A = np.random.randint(0, 2, 5)
+B = np.random.randint(0, 2, 5)
+
+# Assuming identical shape of the arrays and a tolerance
+# for the comparison of values
+print(np.allclose(A, B))
+
+# Checking both the shape and the element values,
+# no tolerance (values have to be exactly equal)
+print(np.array_equal(A, B))
+#+end_src
+
+#+RESULTS[0151d4571cd24d199e6f33f926324854fba7cc24]:
+: False
+: False
+
 * Make an array immutable (read-only) (★★☆)
+#+begin_src python
+Z = np.zeros(10)
+Z.flags.writeable = False
+Z[0] = 1
+#+end_src
+
+#+RESULTS[f122be8af30769ccb8e8185bd2370a573b5cc716]:
+:RESULTS:
+# [goto error]
+: 
+: ValueErrorTraceback (most recent call last)
+: <ipython-input-154-dcc5e7f145b5> in <module>
+:       1 Z = np.zeros(10)
+:       2 Z.flags.writeable = False
+: ----> 3 Z[0] = 1
+: 
+: ValueError: assignment destination is read-only
+:END:
+
 * Consider a random 10x2 matrix representing cartesian coordinates, convert them to polar coordinates (★★☆)
+#+begin_src python
+Z = np.random.random([10,2])
+print(Z)
+
+x, y = Z[:,0], Z[:,1]
+print('x\n', x)
+print('y\n', y)
+
+r, t = np.sqrt(x**2 + y**2), np.arctan2(x, y)
+print('r\n', r)
+print('t\n', t)
+#+end_src
+
+#+RESULTS[545897411b708cf44bc2b24ce2364089a30eadf1]:
+#+begin_example
+  [[0.42927363 0.61656355]
+   [0.16310979 0.06977663]
+   [0.04072631 0.68035605]
+   [0.42346495 0.05223073]
+   [0.52441624 0.90491108]
+   [0.31243754 0.52824723]
+   [0.80464203 0.39688198]
+   [0.15736347 0.2253771 ]
+   [0.13497289 0.5798199 ]
+   [0.59562069 0.52948962]]
+  x
+   [0.42927363 0.16310979 0.04072631 0.42346495 0.52441624 0.31243754
+   0.80464203 0.15736347 0.13497289 0.59562069]
+  y
+   [0.61656355 0.06977663 0.68035605 0.05223073 0.90491108 0.52824723
+   0.39688198 0.2253771  0.5798199  0.52948962]
+  r
+   [0.75128321 0.17740796 0.68157391 0.4266739  1.04588549 0.61372824
+   0.89719792 0.27487833 0.59532243 0.79694621]
+  t
+   [0.60819519 1.16656547 0.05978894 1.44807481 0.52522634 0.53411703
+   1.11257098 0.60953234 0.22871106 0.84410803]
+#+end_example
+
 * Create random vector of size 10 and replace the maximum value by 0 (★★☆)
+#+begin_src python
+Z = np.random.random(10)
+print(Z)
+
+Z[Z.argmax()] = 0
+print(Z)
+#+end_src
+
+#+RESULTS[8718b38b1e129a18407f2263b8fc0a4f89f2184b]:
+: [0.43820874 0.59396108 0.71702944 0.28853328 0.59883239 0.70352512
+:  0.03873704 0.79985651 0.07140784 0.31851477]
+: [0.43820874 0.59396108 0.71702944 0.28853328 0.59883239 0.70352512
+:  0.03873704 0.         0.07140784 0.31851477]
+
 * Create a structured array with x and y coordinates covering the [0,1]x[0,1] area (★★☆)
+#+begin_src python
+Z = np.zeros([5,5], [('x', float), ('y', float)])
+print(Z)
+
+Z['x'], Z['y'] = np.meshgrid(np.linspace(0, 1, 5), np.linspace(0, 1, 5))
+print(Z)
+#+end_src
+
+#+RESULTS[d28d99c9b271a3e39c989a3eebde4535d23a2050]:
+: [[(0., 0.) (0., 0.) (0., 0.) (0., 0.) (0., 0.)]
+:  [(0., 0.) (0., 0.) (0., 0.) (0., 0.) (0., 0.)]
+:  [(0., 0.) (0., 0.) (0., 0.) (0., 0.) (0., 0.)]
+:  [(0., 0.) (0., 0.) (0., 0.) (0., 0.) (0., 0.)]
+:  [(0., 0.) (0., 0.) (0., 0.) (0., 0.) (0., 0.)]]
+: [[(0.  , 0.  ) (0.25, 0.  ) (0.5 , 0.  ) (0.75, 0.  ) (1.  , 0.  )]
+:  [(0.  , 0.25) (0.25, 0.25) (0.5 , 0.25) (0.75, 0.25) (1.  , 0.25)]
+:  [(0.  , 0.5 ) (0.25, 0.5 ) (0.5 , 0.5 ) (0.75, 0.5 ) (1.  , 0.5 )]
+:  [(0.  , 0.75) (0.25, 0.75) (0.5 , 0.75) (0.75, 0.75) (1.  , 0.75)]
+:  [(0.  , 1.  ) (0.25, 1.  ) (0.5 , 1.  ) (0.75, 1.  ) (1.  , 1.  )]]
+
 * Given two arrays, X and Y, construct the Cauchy matrix C (Cij =1/(xi - yj))
+#+begin_src python
+X = np.arange(8)
+Y = X + 0.5
+C = 1 / np.subtract.outer(X, Y)
+print(np.linalg.det(C))
+#+end_src
+
+#+RESULTS[52b72b1f1d0bd70d910987ed5e45dd896e8cedd4]:
+: 3638.163637117973
+
 * Print the minimum and maximum representable value for each numpy scalar type (★★☆)
+#+begin_src python
+for dtype in [np.int8, np.int32, np.int64]:
+   print(np.iinfo(dtype).min)
+   print(np.iinfo(dtype).max)
+
+print()
+for dtype in [np.float32, np.float64]:
+   print(np.finfo(dtype).min)
+   print(np.finfo(dtype).max)
+   print(np.finfo(dtype).eps)
+#+end_src
+
+#+RESULTS[8644ddb086052382d40a80c96993eb979b10310e]:
+#+begin_example
+  -128
+  127
+  -2147483648
+  2147483647
+  -9223372036854775808
+  9223372036854775807
+
+  -3.4028235e+38
+  3.4028235e+38
+  1.1920929e-07
+  -1.7976931348623157e+308
+  1.7976931348623157e+308
+  2.220446049250313e-16
+#+end_example
+
 * How to print all the values of an array? (★★☆)
+#+begin_src python
+np.set_printoptions(threshold=float("inf"))
+Z = np.zeros((16,16))
+print(Z)
+
+np.set_printoptions(threshold=10)
+Z = np.zeros((16,16))
+print(Z)
+#+end_src
+
+#+RESULTS[b5a31db4b635de501423b76e4e320957043fb4c9]:
+#+begin_example
+  [[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+  [[0. 0. 0. ... 0. 0. 0.]
+   [0. 0. 0. ... 0. 0. 0.]
+   [0. 0. 0. ... 0. 0. 0.]
+   ...
+   [0. 0. 0. ... 0. 0. 0.]
+   [0. 0. 0. ... 0. 0. 0.]
+   [0. 0. 0. ... 0. 0. 0.]]
+#+end_example
+
 * How to find the closest value (to a given scalar) in a vector? (★★☆)
+#+begin_src python
+Z = np.random.random(10)
+print(Z)
+
+a = 0.5
+print(Z[np.abs((Z - a)).argmin()])
+#+end_src
+
+#+RESULTS[48524e05357c2358fce33aa28de36ab82613c93d]:
+: [0.87888814 0.28052461 0.2690133  0.53576054 0.31936786 0.99329133
+:  0.3753039  0.57668983 0.15517512 0.00123844]
+: 0.5357605405468211
+
 * Create a structured array representing a position (x,y) and a color (r,g,b) (★★☆)
 * Consider a random vector with shape (100,2) representing coordinates, find point by point distances (★★☆)
 * How to convert a float (32 bits) array into an integer (32 bits) in place?
