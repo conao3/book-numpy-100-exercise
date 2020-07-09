@@ -952,15 +952,212 @@ print(Z[np.abs((Z - a)).argmin()])
 : 0.5357605405468211
 
 * Create a structured array representing a position (x,y) and a color (r,g,b) (★★☆)
+#+begin_src python
+Z = np.zeros(10, [('position', [('x', float), ('y', float)]),
+                  ('color', [('r', float), ('g', float), ('b', float)])])
+Z
+#+end_src
+
+#+RESULTS[31574b23b0db991daa9cc91a74449f3c634aabbc]:
+: array([((0., 0.), (0., 0., 0.)), ((0., 0.), (0., 0., 0.)),
+:        ((0., 0.), (0., 0., 0.)), ((0., 0.), (0., 0., 0.)),
+:        ((0., 0.), (0., 0., 0.)), ((0., 0.), (0., 0., 0.)),
+:        ((0., 0.), (0., 0., 0.)), ((0., 0.), (0., 0., 0.)),
+:        ((0., 0.), (0., 0., 0.)), ((0., 0.), (0., 0., 0.))],
+:       dtype=[('position', [('x', '<f8'), ('y', '<f8')]), ('color', [('r', '<f8'), ('g', '<f8'), ('b', '<f8')])])
+
 * Consider a random vector with shape (100,2) representing coordinates, find point by point distances (★★☆)
+#+begin_src python
+Z = np.random.random([100,2])
+Z
+
+x, y = np.atleast_2d(Z[:,0], Z[:,1])
+print('x\n', x)
+print('y\n', y)
+d = np.sqrt((x-x.T)**2 + (y-y.T)**2)
+print(d)
+
+# Much faster with scipy
+import scipy
+# Thanks Gavin Heverly-Coulson (#issue 1)
+import scipy.spatial
+
+D = scipy.spatial.distance.cdist(Z,Z)
+print(D)
+#+end_src
+
+#+RESULTS[c21145f5bb880aeada1236963701fd1196f227b5]:
+#+begin_example
+  x
+   [[0.77345493 0.54455108 0.08681776 ... 0.75525046 0.66356272 0.4998113 ]]
+  y
+   [[0.03896047 0.19298821 0.51960976 ... 0.73247616 0.4182384  0.32658798]]
+  [[0.         0.27590128 0.83814935 ... 0.69375457 0.39487725 0.39700179]
+   [0.27590128 0.         0.5623179  ... 0.5791731  0.25475757 0.14089197]
+   [0.83814935 0.5623179  0.         ... 0.70150864 0.58558595 0.45587396]
+   ...
+   [0.69375457 0.5791731  0.70150864 ... 0.         0.32734081 0.47957729]
+   [0.39487725 0.25475757 0.58558595 ... 0.32734081 0.         0.18765481]
+   [0.39700179 0.14089197 0.45587396 ... 0.47957729 0.18765481 0.        ]]
+  [[0.         0.27590128 0.83814935 ... 0.69375457 0.39487725 0.39700179]
+   [0.27590128 0.         0.5623179  ... 0.5791731  0.25475757 0.14089197]
+   [0.83814935 0.5623179  0.         ... 0.70150864 0.58558595 0.45587396]
+   ...
+   [0.69375457 0.5791731  0.70150864 ... 0.         0.32734081 0.47957729]
+   [0.39487725 0.25475757 0.58558595 ... 0.32734081 0.         0.18765481]
+   [0.39700179 0.14089197 0.45587396 ... 0.47957729 0.18765481 0.        ]]
+#+end_example
+
 * How to convert a float (32 bits) array into an integer (32 bits) in place?
+#+begin_src python
+Z = (np.random.rand(10)*100).astype(np.float32)
+Y = Z.view(np.int32)
+Y[:] = Z
+print(Y)
+#+end_src
+
+#+RESULTS[f90ab032a3da8c74e368b260cd9fd789589c3973]:
+: [57 31 11 92 93 94 84  0 23 84]
+
 * How to read the following file? (★★☆)
+#+begin_src python
+  import io
+
+  # Fake file
+  s = io.StringIO('''1, 2, 3, 4, 5
+
+                     6,  ,  , 7, 8
+
+                      ,  , 9,10,11
+  ''')
+  Z = np.genfromtxt(s, delimiter=",", dtype=np.int)
+  print(Z)
+#+end_src
+
+#+RESULTS[b2f54bd64b2ff88eeb5099967716a6e3096ff718]:
+: [[ 1  2  3  4  5]
+:  [ 6 -1 -1  7  8]
+:  [-1 -1  9 10 11]]
+
 * What is the equivalent of enumerate for numpy arrays? (★★☆)
+#+begin_src python
+Z = np.arange(9).reshape(3,3)
+for index, value in np.ndenumerate(Z):
+    print(index, value)
+
+for index in np.ndindex(Z.shape):
+    print(index, Z[index])
+#+end_src
+
+#+RESULTS[fbaaf628e65713756300734b65268ddcca29fe77]:
+#+begin_example
+  (0, 0) 0
+  (0, 1) 1
+  (0, 2) 2
+  (1, 0) 3
+  (1, 1) 4
+  (1, 2) 5
+  (2, 0) 6
+  (2, 1) 7
+  (2, 2) 8
+  (0, 0) 0
+  (0, 1) 1
+  (0, 2) 2
+  (1, 0) 3
+  (1, 1) 4
+  (1, 2) 5
+  (2, 0) 6
+  (2, 1) 7
+  (2, 2) 8
+#+end_example
+
 * Generate a generic 2D Gaussian-like array (★★☆)
+#+begin_src python
+X, Y = np.meshgrid(np.linspace(-1,1,10), np.linspace(-1,1,10))
+D = np.sqrt(X*X+Y*Y)
+sigma, mu = 1.0, 0.0
+G = np.exp(-((D-mu)**2 / (2 * sigma**2)))
+G
+#+end_src
+
+#+RESULTS[c9328ac3cff3ccf4484c23223a8bc5a9e09e6904]:
+#+begin_example
+  array([[0.36787944, 0.44822088, 0.51979489, ..., 0.51979489, 0.44822088,
+          0.36787944],
+         [0.44822088, 0.54610814, 0.63331324, ..., 0.63331324, 0.54610814,
+          0.44822088],
+         [0.51979489, 0.63331324, 0.73444367, ..., 0.73444367, 0.63331324,
+          0.51979489],
+         ...,
+         [0.51979489, 0.63331324, 0.73444367, ..., 0.73444367, 0.63331324,
+          0.51979489],
+         [0.44822088, 0.54610814, 0.63331324, ..., 0.63331324, 0.54610814,
+          0.44822088],
+         [0.36787944, 0.44822088, 0.51979489, ..., 0.51979489, 0.44822088,
+          0.36787944]])
+#+end_example
+
 * How to randomly place p elements in a 2D array? (★★☆)
+#+begin_src python
+n = 10
+p = 3
+Z = np.zeros((n,n))
+np.put(Z, np.random.choice(range(n*n), p, replace=False),1)
+Z
+#+end_src
+
+#+RESULTS[5e34a94df1bde9d3429c2a14b8697f68c2ca8aa1]:
+: array([[0., 0., 0., ..., 0., 0., 0.],
+:        [0., 0., 0., ..., 0., 0., 0.],
+:        [0., 0., 0., ..., 0., 0., 0.],
+:        ...,
+:        [0., 0., 1., ..., 0., 0., 0.],
+:        [0., 0., 0., ..., 0., 0., 0.],
+:        [0., 1., 0., ..., 0., 0., 0.]])
+
 * Subtract the mean of each row of a matrix (★★☆)
+#+begin_src python
+X = np.random.rand(5, 10)
+Y = X - X.mean(axis=1, keepdims=True)
+Y
+#+end_src
+
+#+RESULTS[dd498401889d6c787d551c680d2be45aff264754]:
+: array([[ 4.18071076e-02,  1.59099693e-01, -1.30486321e-01, ...,
+:          3.17426883e-01, -2.09074423e-01,  4.45995583e-02],
+:        [ 8.78682460e-02,  3.95133559e-01, -2.44113746e-01, ...,
+:         -6.65103227e-02, -1.90304616e-01,  3.38095446e-01],
+:        [ 5.52186465e-01, -6.37489355e-02, -9.36908644e-02, ...,
+:         -1.20598066e-01,  2.57273902e-01, -9.50648668e-02],
+:        [-1.61294882e-01, -9.35447338e-02, -7.88291906e-02, ...,
+:          5.32676088e-01,  1.89791892e-02, -2.20317189e-01],
+:        [ 2.71850580e-01, -3.23577512e-01,  1.71858254e-01, ...,
+:          2.18414817e-05,  2.54211590e-01, -8.43319639e-02]])
+
 * How to sort an array by the nth column? (★★☆)
+#+begin_src python
+Z = np.random.randint(0,10,[3,3])
+print(Z)
+print(Z[Z[:,1].argsort()])
+#+end_src
+
+#+RESULTS[226caed8a884fa8dc3f2bd56a9cb85179a09a6df]:
+: [[8 4 1]
+:  [0 6 6]
+:  [0 3 4]]
+: [[0 3 4]
+:  [8 4 1]
+:  [0 6 6]]
+
 * How to tell if a given 2D array has null columns? (★★☆)
+#+begin_src python
+Z = np.random.randint(0,3,[3,10])
+print((~Z.any(axis=0)).any())
+#+end_src
+
+#+RESULTS[d3b25c92d589a6dc879cd10654f6bf3e70271bf4]:
+: False
+
 * Find the nearest value from a given value in an array (★★☆)
 * Considering two arrays with shape (1,3) and (3,1), how to compute their sum using an iterator? (★★☆)
 * Create an array class that has a name attribute (★★☆)
