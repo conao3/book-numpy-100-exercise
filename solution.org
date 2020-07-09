@@ -211,15 +211,196 @@ np.nonzero([1,2,0,0,4,0])
 | array | ((0 1 4)) |
 
 * Create a 3x3 identity matrix (★☆☆)
+#+begin_src python
+  np.eye(3)
+#+end_src
+
+#+RESULTS[0f0e5458e3431eb0712b3b41b5b923188062b59d]:
+: array([[1., 0., 0.],
+:        [0., 1., 0.],
+:        [0., 0., 1.]])
+
 * Create a 3x3x3 array with random values (★☆☆)
+#+begin_src python
+np.random.random([3,3,3])
+#+end_src
+
+#+RESULTS[58097c6649e73b33a6315da68e4acd7a3cd03d21]:
+#+begin_example
+  array([[[0.2038182 , 0.76559121, 0.84355616],
+          [0.18709925, 0.1037535 , 0.41538191],
+          [0.5369816 , 0.76712142, 0.76192416]],
+
+         [[0.48598776, 0.28700794, 0.62562127],
+          [0.00111466, 0.41085195, 0.23934649],
+          [0.40297796, 0.34740082, 0.14009223]],
+
+         [[0.51072113, 0.7328188 , 0.87290756],
+          [0.26635126, 0.04224107, 0.88484677],
+          [0.65397837, 0.02452622, 0.82709475]]])
+#+end_example
+
 * Create a 10x10 array with random values and find the minimum and maximum values (★☆☆)
+#+begin_src python
+Z = np.random.random([10,10])
+print("max:%f, min:%f" % (Z.max(), Z.min()))
+#+end_src
+
+#+RESULTS[37cc12cb3d924de48872507a0d345b47ae082b59]:
+: max:0.990723, min:0.006212
+
 * Create a random vector of size 30 and find the mean value (★☆☆)
+#+begin_src python
+Z = np.random.random(30)
+Z.mean()
+#+end_src
+
+#+RESULTS[90f4046c64f38585e1edb205e4a54ca607617a65]:
+: 0.5021235755572655
+
 * Create a 2d array with 1 on the border and 0 inside (★☆☆)
+#+begin_src python
+Z = np.ones([5,5])
+Z[1:-1, 1:-1] = 0
+Z
+#+end_src
+
+#+RESULTS[074a478a60c71341ccc7c5e7d50154489c481892]:
+: array([[1., 1., 1., 1., 1.],
+:        [1., 0., 0., 0., 1.],
+:        [1., 0., 0., 0., 1.],
+:        [1., 0., 0., 0., 1.],
+:        [1., 1., 1., 1., 1.]])
+
 * How to add a border (filled with 0's) around an existing array? (★☆☆)
+#+begin_src python
+Z = np.ones([5,5])
+Z = np.pad(Z, [0,3])
+Z
+#+end_src
+
+#+RESULTS[f9aead99499d320b2d9b2778140b6dd6a99dc8dd]:
+: array([[1., 1., 1., 1., 1., 0., 0., 0.],
+:        [1., 1., 1., 1., 1., 0., 0., 0.],
+:        [1., 1., 1., 1., 1., 0., 0., 0.],
+:        [1., 1., 1., 1., 1., 0., 0., 0.],
+:        [1., 1., 1., 1., 1., 0., 0., 0.],
+:        [0., 0., 0., 0., 0., 0., 0., 0.],
+:        [0., 0., 0., 0., 0., 0., 0., 0.],
+:        [0., 0., 0., 0., 0., 0., 0., 0.]])
+
+#+begin_src python
+Z = np.ones([5,5])
+Z = np.pad(Z, [1,3])
+Z
+#+end_src
+
+#+RESULTS[fefc4bab98c1dd8a906568e271ffec0cac48aa6d]:
+: array([[0., 0., 0., 0., 0., 0., 0., 0., 0.],
+:        [0., 1., 1., 1., 1., 1., 0., 0., 0.],
+:        [0., 1., 1., 1., 1., 1., 0., 0., 0.],
+:        [0., 1., 1., 1., 1., 1., 0., 0., 0.],
+:        [0., 1., 1., 1., 1., 1., 0., 0., 0.],
+:        [0., 1., 1., 1., 1., 1., 0., 0., 0.],
+:        [0., 0., 0., 0., 0., 0., 0., 0., 0.],
+:        [0., 0., 0., 0., 0., 0., 0., 0., 0.],
+:        [0., 0., 0., 0., 0., 0., 0., 0., 0.]])
+
+#+begin_src python
+Z = np.ones([5,5])
+Z = np.pad(Z, pad_width=1)
+Z
+#+end_src
+
+#+RESULTS[1ad20b0e746467723b6702133fc829ed26910b41]:
+: array([[0., 0., 0., 0., 0., 0., 0.],
+:        [0., 1., 1., 1., 1., 1., 0.],
+:        [0., 1., 1., 1., 1., 1., 0.],
+:        [0., 1., 1., 1., 1., 1., 0.],
+:        [0., 1., 1., 1., 1., 1., 0.],
+:        [0., 1., 1., 1., 1., 1., 0.],
+:        [0., 0., 0., 0., 0., 0., 0.]])
+
 * What is the result of the following expression? (★☆☆)
+#+begin_src python
+print(0 * np.nan)
+print(np.nan == np.nan)
+print(np.inf > np.nan)
+print(np.nan - np.nan)
+print(np.nan in set([np.nan]))
+print(0.3 == 3 * 0.1)
+#+end_src
+
+#+RESULTS[21bdd41808c5424fdeee48df42da665176b5e92a]:
+: nan
+: False
+: False
+: nan
+: True
+: False
+
 * Create a 5x5 matrix with values 1,2,3,4 just below the diagonal (★☆☆)
+#+begin_src python
+np.diag(1+np.arange(4), k=1)
+#+end_src
+
+#+RESULTS[31865de753ec79a14dea4f11d11cab6ff35c21a6]:
+: array([[0, 1, 0, 0, 0],
+:        [0, 0, 2, 0, 0],
+:        [0, 0, 0, 3, 0],
+:        [0, 0, 0, 0, 4],
+:        [0, 0, 0, 0, 0]])
+
+#+begin_src python
+np.diag(1+np.arange(4), k=-1)
+#+end_src
+
+#+RESULTS[c8446b378f6a404ef08f55f0ef2746b4605eb625]:
+: array([[0, 0, 0, 0, 0],
+:        [1, 0, 0, 0, 0],
+:        [0, 2, 0, 0, 0],
+:        [0, 0, 3, 0, 0],
+:        [0, 0, 0, 4, 0]])
+
 * Create a 8x8 matrix and fill it with a checkerboard pattern (★☆☆)
+#+begin_src python
+Z = np.zeros([8,8])
+Z[::2, ::2] = 1
+Z[1::2, 1::2] = 1
+Z
+#+end_src
+
+#+RESULTS[88900e05db31a7b8db76322ade6c8626f6da43fb]:
+: array([[1., 0., 1., 0., 1., 0., 1., 0.],
+:        [0., 1., 0., 1., 0., 1., 0., 1.],
+:        [1., 0., 1., 0., 1., 0., 1., 0.],
+:        [0., 1., 0., 1., 0., 1., 0., 1.],
+:        [1., 0., 1., 0., 1., 0., 1., 0.],
+:        [0., 1., 0., 1., 0., 1., 0., 1.],
+:        [1., 0., 1., 0., 1., 0., 1., 0.],
+:        [0., 1., 0., 1., 0., 1., 0., 1.]])
+
 * Consider a (6,7,8) shape array, what is the index (x,y,z) of the 100th element?
+#+begin_src python
+Z = np.random.random([2,3])
+print(Z)
+print(Z.argmax())
+print(np.unravel_index(Z.argmax(), Z.shape))
+#+end_src
+
+#+RESULTS[3690479d1f992960e339b2cab850b4a29dcfc32d]:
+: [[0.8272187  0.02819211 0.3075672 ]
+:  [0.97838275 0.23290755 0.84657024]]
+: 3
+: (1, 0)
+
+#+begin_src python
+print(np.unravel_index(99, [6,7,8]))
+#+end_src
+
+#+RESULTS[c3109993e6c100f0c58c69015b94e4caed675128]:
+: (1, 5, 3)
+
 * Create a checkerboard 8x8 matrix using the tile function (★☆☆)
 * Normalize a 5x5 random matrix (★☆☆)
 * Create a custom dtype that describes a color as four unsigned bytes (RGBA) (★☆☆)
