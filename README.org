@@ -1,46 +1,42 @@
+#+title: NumPy 100 Exercises
 #+author: conao3
-#+date: <2020-03-20 Fri>
 
 [[https://github.com/conao3/book-numpy-100-exercise][https://raw.githubusercontent.com/conao3/files/master/blob/headers/png/book-numpy-100-exercise.png]]
 [[https://github.com/conao3/book-numpy-100-exercise/blob/master/LICENSE][https://img.shields.io/github/license/conao3/book-numpy-100-exercise.svg?style=flat-square]]
 [[https://github.com/conao3/book-numpy-100-exercise/releases][https://img.shields.io/github/tag/conao3/book-numpy-100-exercise.svg?style=flat-square]]
-[[https://github.com/conao3/book-numpy-100-exercise/actions][https://img.shields.io/badge/patreon-become%20a%20patron-orange.svg?logo=patreon&style=flat-square]]
-[[https://twitter.com/conao_3][https://img.shields.io/badge/twitter-@conao__3-blue.svg?logo=twitter&style=flat-square]]
-[[https://conao3-support.slack.com/join/shared_invite/enQtNjUzMDMxODcyMjE1LWUwMjhiNTU3Yjk3ODIwNzAxMTgwOTkxNmJiN2M4OTZkMWY0NjI4ZTg4MTVlNzcwNDY2ZjVjYmRiZmJjZDU4MDE][https://img.shields.io/badge/chat-on_slack-blue.svg?logo=slack&style=flat-square]]
 
-* Table of Contents
-- [[#description][Description]]
-- [[#install][Install]]
-- [[#usage][Usage]]
-- [[#information][Information]]
-  - [[#community][Community]]
-  - [[#contribution][Contribution]]
-  - [[#license][License]]
-  - [[#author][Author]]
+* Overview
 
-* Description
-The exercize for [[https://github.com/rougier/numpy-100][Numpy 100 exercise]].
+My solutions to the [[https://github.com/rougier/numpy-100][100 NumPy Exercises]], a collection of exercises ranging from basic to advanced NumPy operations. The exercises cover array creation, indexing, mathematical operations, broadcasting, and more.
 
-* Install
+* Contents
 
-* Usage
+- =solution.org= - All 100 exercise solutions with explanations and output
 
-* Information
-** Community
-All feedback and suggestions are welcome!
+* Requirements
 
-You can use github issues, but you can also use [[https://conao3-support.slack.com/join/shared_invite/enQtNjUzMDMxODcyMjE1LWUwMjhiNTU3Yjk3ODIwNzAxMTgwOTkxNmJiN2M4OTZkMWY0NjI4ZTg4MTVlNzcwNDY2ZjVjYmRiZmJjZDU4MDE][Slack]]
-if you want a more casual conversation.
+- Python 3.x
+- NumPy
 
-** Contribution
-We welcome PR!
+* Getting Started
 
-** License
-#+begin_example
-  MIT License
-  Copyright (c) Naoya Yamashita - https://conao3.com
-  https://github.com/conao3/book-numpy-100-exercise/blob/master/LICENSE
-#+end_example
+Clone the repository and explore the solutions:
 
-** Author
-- Naoya Yamashita ([[https://github.com/conao3][conao3]])
+#+begin_src shell
+git clone https://github.com/conao3/book-numpy-100-exercise.git
+cd book-numpy-100-exercise
+#+end_src
+
+The solutions are written in Org mode with embedded Python code blocks. You can:
+
+- View them directly on GitHub
+- Open in Emacs for interactive execution with Org Babel
+- Export to other formats using Org mode's export features
+
+* License
+
+MIT License - See [[file:LICENSE][LICENSE]] for details.
+
+* Author
+
+Naoya Yamashita ([[https://github.com/conao3][conao3]])
